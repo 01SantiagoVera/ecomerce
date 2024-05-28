@@ -10,13 +10,17 @@ type RelatedProductsProps = {
   countryCode: string
 }
 
-const RelatedProducts = ({ product, countryCode }: RelatedProductsProps) => {
+export default async function RelatedProducts({
+  product,
+  countryCode,
+}: RelatedProductsProps) {
   const region = await getRegion(countryCode)
 
   if (!region) {
     return null
   }
 
+  // edit this function to define your related products logic
   const setQueryParams = (): StoreGetProductsParams => {
     const params: StoreGetProductsParams = {}
 
@@ -43,13 +47,13 @@ const RelatedProducts = ({ product, countryCode }: RelatedProductsProps) => {
 
   const queryParams = setQueryParams()
 
-  const { response } = await getProductsList({
+  const productPreviews = await getProductsList({
     queryParams,
     countryCode,
-  })
-
-  const productPreviews = response.products.filter(
-    (productPreview) => productPreview.id !== product.id
+  }).then(({ response }) =>
+    response.products.filter(
+      (productPreview) => productPreview.id !== product.id
+    )
   )
 
   if (!productPreviews.length) {
@@ -60,10 +64,10 @@ const RelatedProducts = ({ product, countryCode }: RelatedProductsProps) => {
     <div className="product-page-constraint">
       <div className="flex flex-col items-center text-center mb-16">
         <span className="text-base-regular text-gray-600 mb-6">
-          Productos relacionados
+          Related products
         </span>
         <p className="text-2xl-regular text-ui-fg-base max-w-lg">
-          También puedes querer echarle un vistazo a estos productos.
+          You might also want to check out these products.
         </p>
       </div>
 
@@ -77,5 +81,3 @@ const RelatedProducts = ({ product, countryCode }: RelatedProductsProps) => {
     </div>
   )
 }
-
-export default RelatedProducts

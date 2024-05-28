@@ -27,14 +27,14 @@ const Register = ({ setCurrentView }: Props) => {
       <form className="w-full flex flex-col" action={formAction}>
         <div className="flex flex-col w-full gap-y-2">
           <Input
-            label="First name"
+            label="Nombre"
             name="first_name"
             required
             autoComplete="given-name"
             data-testid="first-name-input"
           />
           <Input
-            label="Last name"
+            label="Apellido"
             name="last_name"
             required
             autoComplete="family-name"
@@ -48,9 +48,9 @@ const Register = ({ setCurrentView }: Props) => {
             autoComplete="email"
             data-testid="email-input"
           />
-          <Input label="Phone" name="phone" type="tel" autoComplete="tel" data-testid="phone-input" />
+          <Input label="Telefono" name="phone" type="tel" autoComplete="tel" data-testid="phone-input" />
           <Input
-            label="Password"
+            label="Contraseña"
             name="password"
             required
             type="password"
