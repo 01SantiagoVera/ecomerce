@@ -1,5 +1,4 @@
 "use client"
-
 import { Region } from "@medusajs/medusa"
 import { PricedProduct } from "@medusajs/medusa/dist/types/pricing"
 import { Button } from "@medusajs/ui"
@@ -171,10 +170,10 @@ export default function ProductActions({
           data-testid="add-product-button"
         >
           {!variant
-            ? "Select variant"
+            ? "Selecciona una variante"
             : !inStock
-            ? "Out of stock"
-            : "Add to cart"}
+            ? "Fuera de stock"
+            : "Agregar al carrito"}
         </Button>
         <MobileActions
           product={product}

@@ -1,50 +1,62 @@
 "use client"
+import { Cart, PaymentSession } from "@medusajs/medusa"
+import { loadStripe } from "@stripe/stripe-js"
+import React from "react"
+import StripeWrapper from "./stripe-wrapper"
+import { PayPalScriptProvider } from "@paypal/react-paypal-js"
+import { createContext } from "react"
 
-import { Stripe, StripeElementsOptions } from "@stripe/stripe-js"
-import { Elements } from "@stripe/react-stripe-js"
+type WrapperProps = {
+  cart: Omit<Cart, "refundable_amount" | "refunded_total">
+  children: React.ReactNode
+}
 
-import { PaymentSession } from "@medusajs/medusa"
+export const StripeContext = createContext(false)
 
-type StripeWrapperProps = {
-    paymentSession: PaymentSession
-    stripeKey?: string
-    stripePromise: Promise<Stripe | null> | null
-    children: React.ReactNode
-  }
+const stripeKey = process.env.NEXT_PUBLIC_STRIPE_KEY
+const stripePromise = stripeKey ? loadStripe(stripeKey) : null
 
-const StripeWrapper: React.FC<StripeWrapperProps> = ({
-    paymentSession,
-    stripeKey,
-    stripePromise,
-    children,
-  }) => {
-    const options: StripeElementsOptions = {
-      clientSecret: paymentSession!.data?.client_secret as string | undefined,
-    }
-  
-    if (!stripeKey) {
-      throw new Error(
-        "Stripe key is missing. Set NEXT_PUBLIC_STRIPE_KEY environment variable."
-      )
-    }
-  
-    if (!stripePromise) {
-      throw new Error(
-        "Stripe promise is missing. Make sure you have provided a valid Stripe key."
-      )
-    }
-  
-    if (!paymentSession?.data?.client_secret) {
-      throw new Error(
-        "Stripe client secret is missing. Cannot initialize Stripe."
-      )
-    }
-  
+const paypalClientId = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID
+
+const Wrapper: React.FC<WrapperProps> = ({ cart, children }) => {
+  const paymentSession = cart.payment_session as PaymentSession
+
+  const isStripe = paymentSession?.provider_id?.includes("stripe")
+
+  if (isStripe && paymentSession && stripePromise) {
     return (
-      <Elements options={options} stripe={stripePromise}>
-        {children}
-      </Elements>
+      <StripeContext.Provider value={true}>
+        <StripeWrapper
+          paymentSession={paymentSession}
+          stripeKey={stripeKey}
+          stripePromise={stripePromise}
+        >
+          {children}
+        </StripeWrapper>
+      </StripeContext.Provider>
     )
   }
 
-  export default StripeWrapper
+  if (
+    paymentSession?.provider_id === "paypal" &&
+    paypalClientId !== undefined &&
+    cart
+  ) {
+    return (
+      <PayPalScriptProvider
+        options={{
+          "client-id": process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || "test",
+          currency: cart?.region.currency_code.toUpperCase(),
+          intent: "authorize",
+          components: "buttons",
+        }}
+      >
+        {children}
+      </PayPalScriptProvider>
+    )
+  }
+
+  return <div>{children}</div>
+}
+
+export default Wrapper

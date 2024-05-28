@@ -76,7 +76,7 @@ const AccountNav = ({
                   </LocalizedClientLink>
                 </li>
                 <li>
-                  <LocalizedClientLink
+                  <LocalizedClientLink  
                     href="/account/orders"
                     className="flex items-center justify-between py-4 border-b border-gray-200 px-8"
                     data-testid="orders-link"
@@ -156,7 +156,7 @@ const AccountNav = ({
                   onClick={handleLogout}
                   data-testid="logout-button"
                 >
-                  Cerrar sección
+                  Cerrar sesión
                 </button>
               </li>
             </ul>

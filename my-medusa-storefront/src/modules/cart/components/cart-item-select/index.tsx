@@ -18,16 +18,19 @@ type NativeSelectProps = {
   touched?: Record<string, unknown>
 } & Omit<SelectHTMLAttributes<HTMLSelectElement>, "size">
 
+// ForwardRef para usar una referencia externa en el componente
 const CartItemSelect = forwardRef<HTMLSelectElement, NativeSelectProps>(
   ({ placeholder = "Select...", className, children, ...props }, ref) => {
     const innerRef = useRef<HTMLSelectElement>(null)
     const [isPlaceholder, setIsPlaceholder] = useState(false)
 
+    // Permite que el componente padre acceda a la referencia interna
     useImperativeHandle<HTMLSelectElement | null, HTMLSelectElement | null>(
       ref,
       () => innerRef.current
     )
 
+    // Actualiza el estado del placeholder basado en el valor del select
     useEffect(() => {
       if (innerRef.current && innerRef.current.value === "") {
         setIsPlaceholder(true)

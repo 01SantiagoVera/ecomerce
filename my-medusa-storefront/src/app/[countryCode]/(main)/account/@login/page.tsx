@@ -3,10 +3,12 @@ import { Metadata } from "next"
 import LoginTemplate from "@modules/account/templates/login-template"
 
 export const metadata: Metadata = {
-  title: "Sign in",
-  description: "Sign in to your Medusa Store account.",
+  title: "Iniciar sesión",
+  description: "Inicia sesión en tu cuenta de Medusa Store.",
 }
 
-export default function Login() {
+const Login = () => {
   return <LoginTemplate />
 }
+
+export default Login
